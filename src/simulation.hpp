@@ -17,7 +17,7 @@ namespace simulation
     // xy -> fxy
     // u :ans
     template<typename FuncType> // 本当は関数の部分型にしたいがコンパイル時にチェックさせれば大丈夫
-    void simulate(eg::Matrix<std::vector<float>, eg::Dynamic, eg::Dynamic>& xys, eg::MatrixXcf& u, const FuncType f,
+    void simulate(eg::MatrixXcf& u, const FuncType f,
                     eg::VectorXf range, const float r, const float k) {
         
         
@@ -47,7 +47,7 @@ namespace simulation
 
         eg::Matrix<T, eg::Dynamic, eg::Dynamic> mat;
         for (int i=0; i<range.col; ++i) {
-            for (int i=0; i<range.col; ++i) {
+            for (int j=0; j<range.col; ++j) {
                 mat(i, j) = f(range(i), range(j));
             }
         }
