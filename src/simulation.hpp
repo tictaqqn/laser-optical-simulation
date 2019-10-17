@@ -21,9 +21,9 @@ namespace simulation
                     eg::VectorXf range, const float r, const float k) {
         
         
-        const eg::MatrixXf fxys = calc_xy_mesh(range, f); // f(x, y)
+        const eg::MatrixXf fxy = calc_xy_mesh(range, f); // f(x, y)
 
-        u = calc_xy_mesh(range, [fxys, range, k, r](std::vector<float> xy){ return integral(xy[0], xy[1], fxys, range, k, r);});
+        u = calc_xy_mesh(range, [fxy, range, k, r](float x, float y){ return integral(x, y, fxy, range, k, r);});
         
         u = u * std::exp(I*k*r) / r;
 
