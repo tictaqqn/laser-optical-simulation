@@ -54,6 +54,10 @@ namespace simulation
         return mat;
     }
 
+    float circle(float x, float y, float r0) {
+        return x*x + y*y < r0*r0 ? 1.0 : 0.0;
+    }
+
     
 } // namespace simulation
 
