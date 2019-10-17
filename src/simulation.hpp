@@ -34,10 +34,13 @@ namespace simulation
     static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXf& fxy, std::vector< float > range, const float k, const float r) {
         
         std::complex<float> sum(0, 0);
+        int i = 0, j = 0;
         for (const auto& x : range) {
             for (const auto& y : range) {
-                sum += std::exp( I * k / r *(x*x_p + y*y_p) );
+                sum += fxy(i, j) * std::exp( I * k / r *(x*x_p + y*y_p) );
+                ++j;
             }
+            ++i;
         }
         return sum;
     }
