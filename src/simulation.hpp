@@ -18,7 +18,7 @@ namespace simulation
     // u :ans
     template<typename FuncType> // 本当は関数の部分型にしたいがコンパイル時にチェックさせれば大丈夫
     void simulate(eg::Matrix<std::vector<float>, eg::Dynamic, eg::Dynamic>& xys, eg::MatrixXcf& u, const FuncType f,
-                    std::vector< float > range, const float r, const float k) {
+                    eg::VectorXf range, const float r, const float k) {
         
         
         const eg::MatrixXf fxys = calc_xy_mesh(range, f); // f(x, y)
@@ -31,23 +31,27 @@ namespace simulation
 
     }
     
-    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXf& fxy, std::vector< float > range, const float k, const float r) {
+    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXf& fxy, const eg::VectorXf range, const float k, const float r) {
         
         std::complex<float> sum(0, 0);
-        int i = 0, j = 0;
-        for (const auto& x : range) {
-            for (const auto& y : range) {
-                sum += fxy(i, j) * std::exp( I * k / r *(x*x_p + y*y_p) );
-                ++j;
+        for (int i=0; i<range.col; ++i) {
+            for (int j=0; j<range.col; ++j) {
+                sum += fxy(i, j) * std::exp( I * k / r *(range(i)*x_p + range(j)*y_p) );
             }
-            ++i;
         }
         return sum;
     }
 
     template<typename T, typename FuncType>
-    static eg::Matrix<T, eg::Dynamic, eg::Dynamic> calc_xy_mesh(std::vector<float> range, FuncType f) {
+    static eg::Matrix<T, eg::Dynamic, eg::Dynamic> calc_xy_mesh(eg::VectorXf range, FuncType f) {
 
+        eg::Matrix<T, eg::Dynamic, eg::Dynamic> mat;
+        for (int i=0; i<range.col; ++i) {
+            for (int i=0; i<range.col; ++i) {
+                mat(i, j) = f(range(i), range(j));
+            }
+        }
+        return mat;
     }
 
     
