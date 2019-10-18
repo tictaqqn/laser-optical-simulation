@@ -1,5 +1,5 @@
-# define EIGEN_NO_DEBUG // コード内のassertを無効化．
-# define EIGEN_MPL2_ONLY // LGPLライセンスのコードを使わない．
+// # define EIGEN_NO_DEBUG // コード内のassertを無効化．
+// # define EIGEN_MPL2_ONLY // LGPLライセンスのコードを使わない．
 
 # include <vector>
 # include <complex>
@@ -14,51 +14,48 @@ constexpr std::complex<float> I(0, 1);
 
 namespace simulation
 {
-    // xy -> fxy
-    // u :ans
-    template<typename FuncType> // (float, float) -> bool
-    void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf range0, const eg::VectorXf range1, const float r, const float k) {
-        
-        
-        const eg::MatrixXf fxy = calc_xy_mesh(range0, f); // f(x, y)
+    template<typename T, typename FuncType> // (float, float) -> bool
+    static void calc_xy_mesh(eg::Matrix<T, eg::Dynamic, eg::Dynamic>& mat, const eg::VectorXf& range, const FuncType f) {
 
-        eg::MatrixXcf u;
-        // ここがn^4
-        u = calc_xy_mesh(range1, [fxy, &range, k, r](float x, float y){ return integral(x, y, fxy, range1, k, r);});
-        u /= r;
-
-        // 絶対値を求めるなら位相因子は不要
-        // u = u * std::exp(I*k*r) / r;
-        grr = u.unaryExpr(std::norm);
-    }
-    
-    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXf& fxy, const eg::VectorXf& range, const float k, const float r) {
-        
-        std::complex<float> sum(0, 0);
-        for (int i=0; i<range.cols(); ++i) {
-            for (int j=0; j<range.cols(); ++j) {
-                if (fxy(i, j))
-                    sum += std::exp( I * k / r *(range(i)*x_p + range(j)*y_p) );
-            }
-        }
-        return sum;
-    }
-
-    template<typename FuncType> // (float, float) -> bool
-    static eg::Matrix<bool, eg::Dynamic, eg::Dynamic> calc_xy_mesh(const eg::VectorXf& range, const FuncType f) {
-
-        eg::Matrix<bool, eg::Dynamic, eg::Dynamic> mat;
         for (int i=0; i<range.cols(); ++i) {
             for (int j=0; j<range.cols(); ++j) {
                 mat(i, j) = f(range(i), range(j));
             }
         }
-        return mat;
     }
+    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXf& fxy, const eg::VectorXf& range, const float k, const float r) {
+        
+        std::complex<float> sum(0, 0);
+        for (int i=0; i<range.cols(); ++i) {
+            for (int j=0; j<range.cols(); ++j) {
+                if (fxy(i, j) == 1)
+                    sum += std::exp( I * k / r *(range(i)*x_p + range(j)*y_p) );
+            }
+        }
+        return sum;
+    }
+    // xy -> fxy
+    // u :ans
+    template<typename FuncType> // (float, float) -> int
+    void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf range0, const eg::VectorXf range1, const float r, const float k) {
+        
+        eg::Matrix<int, eg::Dynamic, eg::Dynamic> fxy = eg::MatrixXi::Zero(range0.cols(), range0.cols());        
+        calc_xy_mesh(fxy, range0, [r, f](float x, float y){ return f(x, y, r);}); // f(x, y)
+
+        eg::MatrixXcf u = eg::MatrixXcf::Zero(range1.cols(), range1.cols());
+        // ここがn^4
+        calc_xy_mesh(u, range1, [fxy, &range1, k, r](float x, float y){ return integral(x, y, fxy, range1, k, r);});
+        u /= r;
+
+        // 絶対値を求めるなら位相因子は不要
+        // u = u * std::exp(I*k*r) / r;
+        grr = u.unaryExpr([](std::complex<float> z){return std::norm(z);});
+    }
+    
 
 
-    inline bool circle(const float x, const float y, const float r0) {
-        return x*x + y*y < r0*r0;
+    inline int circle(const float x, const float y, const float r0) {
+        return x*x + y*y < r0*r0 ? 1 : 0;
     }
 
 
