@@ -1,4 +1,4 @@
-// # define EIGEN_NO_DEBUG // コード内のassertを無効化．
+# define EIGEN_NO_DEBUG // コード内のassertを無効化．
 // # define EIGEN_MPL2_ONLY // LGPLライセンスのコードを使わない．
 
 # include <vector>
@@ -23,13 +23,13 @@ namespace simulation
             }
         }
     }
-    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXi& fxy, const eg::VectorXf& range, const float k, const float r) {
+    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXi& fxy, const eg::VectorXf& range_flt, const float k, const float r) {
         
         std::complex<float> sum(0, 0);
-        for (int i=0; i<range.size(); ++i) {
-            for (int j=0; j<range.size(); ++j) {
+        for (int i=0; i<range_flt.size(); ++i) {
+            for (int j=0; j<range_flt.size(); ++j) {
                 if (fxy(i, j) == 1)
-                    sum += std::exp( I * k / r *(range(i)*x_p + range(j)*y_p) );
+                    sum += std::exp( I * k / r *(range_flt(i)*x_p + range_flt(j)*y_p) );
             }
         }
         return sum;
@@ -37,14 +37,14 @@ namespace simulation
     // xy -> fxy
     // u :ans
     template<typename FuncType> // (float, float) -> int
-    void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf& range0, const eg::VectorXf& range1, const float r, const float k) {
+    void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf& range_flt, const eg::VectorXf& range_sc, const float r, const float k) {
         
-        eg::MatrixXi fxy = eg::MatrixXi::Zero(range0.size(), range0.size());        
-        calc_xy_mesh(fxy, range0, [r, f](float x, float y){ return f(x, y, r); }); // f(x, y)
+        eg::MatrixXi fxy = eg::MatrixXi::Zero(range_flt.size(), range_flt.size());        
+        calc_xy_mesh(fxy, range_flt, [r, f](float x, float y){ return f(x, y, r); }); // f(x, y)
 
-        eg::MatrixXcf u = eg::MatrixXcf::Zero(range1.size(), range1.size());
+        eg::MatrixXcf u = eg::MatrixXcf::Zero(range_sc.size(), range_sc.size());
         // ここがn^4
-        calc_xy_mesh(u, range1, [&fxy, &range1, k, r](float x, float y){ return integral(x, y, fxy, range1, k, r); });
+        calc_xy_mesh(u, range_sc, [&fxy, &range_flt, k, r](float x_p, float y_p){ return integral(x_p, y_p, fxy, range_flt, k, r); });
         // u /= r;
 
         // 絶対値を求めるなら位相因子は不要

@@ -1,0 +1,1 @@
+wavelength: 632.8 R: 400 r0: 10 LinSpaced num:1000 100
