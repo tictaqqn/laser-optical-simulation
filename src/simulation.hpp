@@ -5,6 +5,7 @@
 # include <complex>
 # include <functional>
 # include "Eigen/Dense"
+// # define DEBUG
 
 namespace eg = Eigen;
 constexpr std::complex<float> I(0, 1);
@@ -37,10 +38,14 @@ namespace simulation
     // xy -> fxy
     // u :ans
     template<typename FuncType> // (float, float) -> int
-    void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf& range_flt, const eg::VectorXf& range_sc, const float r, const float k) {
+    void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf& range_flt, const eg::VectorXf& range_sc, const float r, const float k, const float r0) {
         
         eg::MatrixXi fxy = eg::MatrixXi::Zero(range_flt.size(), range_flt.size());        
-        calc_xy_mesh(fxy, range_flt, [r, f](float x, float y){ return f(x, y, r); }); // f(x, y)
+        calc_xy_mesh(fxy, range_flt, [r0, f](float x, float y){ return f(x, y, r0); }); // f(x, y)
+
+        # ifdef DEBUG
+        std::cout << fxy << std::endl;
+        # endif
 
         eg::MatrixXcf u = eg::MatrixXcf::Zero(range_sc.size(), range_sc.size());
         // ここがn^4

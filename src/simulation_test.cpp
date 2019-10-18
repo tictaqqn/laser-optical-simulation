@@ -1,8 +1,9 @@
 # include <bits/stdc++.h> // for M_PI
 # include "Eigen/Dense"
 # include "simulation.hpp"
+# define DEBUG
 
-namespace sim = simulation;
+using namespace simulation;
 namespace eg = Eigen;
 
 int main(int argc, char const *argv[])
@@ -16,8 +17,11 @@ int main(int argc, char const *argv[])
     const eg::VectorXf range_flt = eg::VectorXf::LinSpaced(100, -r0, r0);
     const eg::VectorXf range_sc = eg::VectorXf::LinSpaced(100, -screen_range, screen_range);
 
-    std::cout << range_flt << std::endl;
-    std::cout << range_sc << std::endl;
+    // std::cout << range_flt << std::endl;
+    // std::cout << range_sc << std::endl;
+
+    eg::MatrixXf grr;
+    simulate(grr, circle, range_flt, range_sc, r, k, r0);
     
 
     return 0;
