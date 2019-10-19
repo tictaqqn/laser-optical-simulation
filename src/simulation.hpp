@@ -2,6 +2,7 @@
 // # define EIGEN_MPL2_ONLY // LGPLライセンスのコードを使わない．
 
 # include <vector>
+// # include <list>
 # include <complex>
 # include <functional>
 # include "Eigen/Dense"
@@ -18,16 +19,36 @@ namespace simulation
     template<typename T, typename FuncType> // (float, float) -> T
     static void calc_xy_mesh(eg::Matrix<T, eg::Dynamic, eg::Dynamic>& mat, const eg::VectorXf& range, const FuncType f) {
 
+        std::vector<std::thread> threads;
+        std::vector< std::vector<T> > result;
+        for (int i=0; i<range.size(); ++i) {
+            std::vector<T> v(range.size());
+            result.push_back(v);
+        }
+
+        for (int i=0;i<range.size();++i)
+            threads.push_back(std::thread(
+                [i, &range, f](std::vector<T>& v) {
+                    for (int j=0; j<range.size(); ++j) {
+                        v[j] = f(range(i), range(j));
+                    }
+                },
+                std::ref(result[i])));
+        for (std::thread& t: threads)
+            t.join();
         for (int i=0; i<range.size(); ++i) {
             for (int j=0; j<range.size(); ++j) {
-                mat(i, j) = f(range(i), range(j));
+                mat(i, j) = result[i][j];
             }
         }
     }
     static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXi& fxy, const eg::VectorXf& range_flt, const float k, const float r) {
         
         std::complex<float> sum(0, 0);
+        // # pragma omp declare reduction(+ : std::complex<float> : omp_out=omp_out+omp_in) //initializer(omp_priv = omp_orig)
+        // # pragma omp parallel 
         for (int i=0; i<range_flt.size(); ++i) {
+            // # pragma omp for reduction(+:sum)
             for (int j=0; j<range_flt.size(); ++j) {
                 if (fxy(i, j) == 1)
                     sum += std::exp( I * k / r *(range_flt(i)*x_p + range_flt(j)*y_p) );
