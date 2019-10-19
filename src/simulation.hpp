@@ -29,13 +29,16 @@ namespace simulation
         std::complex<float> sum(0, 0);
         # pragma omp declare reduction(+ : std::complex<float> : omp_out=omp_out+omp_in) //initializer(omp_priv = omp_orig)
         # pragma omp parallel 
-        for (int i=0; i<range_flt.size(); ++i) {
+        {
             # pragma omp for reduction(+:sum)
-            for (int j=0; j<range_flt.size(); ++j) {
-                if (fxy(i, j) == 1)
-                    sum += std::exp( I * k / r *(range_flt(i)*x_p + range_flt(j)*y_p) );
+            for (int i=0; i<range_flt.size(); ++i) {
+                for (int j=0; j<range_flt.size(); ++j) {
+                    if (fxy(i, j) == 1)
+                        sum += std::exp( I * k / r *(range_flt(i)*x_p + range_flt(j)*y_p) );
+                }
             }
         }
+        
         return sum;
     }
     // xy -> fxy
