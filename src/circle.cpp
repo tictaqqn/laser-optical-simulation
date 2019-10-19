@@ -7,7 +7,7 @@
 using namespace simulation;
 namespace eg = Eigen;
 
-// コンパイルのオプションは-O3 -funroll-loops
+// コンパイルのオプションは-O3 -funroll-loops -fopenmp
 int main(int argc, char const *argv[])
 {
     /* 波長以外すべてmm単位 */
