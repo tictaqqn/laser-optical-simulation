@@ -34,8 +34,8 @@ namespace simulation
             # pragma omp for reduction(+:sum)
             for(int th=0; th<n_th; ++th) {
                 for (int i=0; i < (th!=n_th-1 ? range_flt.size()/n_th : range_flt.size()/n_th * 2); ++i) {
-                    int ii = i+range_flt.size()/n_th*th;
-                    if(th==n_th-1 && ii>=range_flt.size()-1) break;
+                    const int ii = i+range_flt.size()/n_th*th;
+                    if (th==n_th-1 && ii>=range_flt.size()) break;
                     // std::cout <<th <<" "<< i << " " << ii << std::endl;
                     for (int j=0; j<range_flt.size(); ++j) {
                         if (fxy(ii, j) == 1)
