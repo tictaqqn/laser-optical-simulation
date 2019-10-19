@@ -33,8 +33,8 @@ namespace simulation
         {
             # pragma omp for reduction(+:sum)
             for(int th=0; th<n_th; ++th) {
-                for (int i=0; i<std::min(range_flt.size()/n_th*th, range_flt.size()); ++i) {
-                    
+                for (int i=0; i<range_flt.size()/n_th; ++i) {
+                    if(k==n_th-1 && i==range_flt.size()%n_th) break;
                     for (int j=0; j<range_flt.size(); ++j) {
                         if (fxy(i, j) == 1)
                             sum += std::exp( I * k / r *(range_flt(i)*x_p + range_flt(j)*y_p) );
