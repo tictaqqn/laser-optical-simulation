@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
     constexpr float k = 2 * M_PI / (wavelength_nm * 1e-6);
     constexpr float r = 400; // スクリーンとの距離
     constexpr float r0 = 10; // 円の半径
-    constexpr float screen_range = 0.5; // スクリーンの幅/2
+    constexpr float screen_range = 0.1; // スクリーンの幅/2
     constexpr int dense_flt = 100;
     constexpr int dense_sc = 1000;
     const eg::VectorXf range_flt = eg::VectorXf::LinSpaced(dense_flt, -r0, r0);
