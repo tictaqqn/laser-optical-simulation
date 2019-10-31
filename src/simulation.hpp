@@ -24,15 +24,28 @@ namespace simulation
             }
         }
     }
-    static std::complex<float> integral(float x_p, float y_p, const eg::MatrixXi& fxy, const eg::VectorXf& range_flt, const float k, const float r) {
+    static std::complex<float> integral(const float x_p, const float y_p, const eg::MatrixXi& fxy, const eg::VectorXf& range_flt, const float k, const float r) {
         
         std::complex<float> sum(0, 0);
-        for (int i=0; i<range_flt.size(); ++i) {
-            for (int j=0; j<range_flt.size(); ++j) {
-                if (fxy(i, j) == 1)
-                    sum += std::exp( I * k / r *(range_flt(i)*x_p + range_flt(j)*y_p) );
+        constexpr int n_th = 8;
+        # pragma omp declare reduction(+ : std::complex<float> : omp_out=omp_out+omp_in) //initializer(omp_priv = omp_orig)
+        # pragma omp parallel 
+        {
+            # pragma omp for reduction(+:sum)
+            for(int th=0; th<n_th; ++th) {
+                for (int i=0; i < (th!=n_th-1 ? range_flt.size()/n_th : range_flt.size()/n_th * 2); ++i) {
+                    const int ii = i+range_flt.size()/n_th*th;
+                    if (th==n_th-1 && ii>=range_flt.size()) break;
+                    // std::cout <<th <<" "<< i << " " << ii << std::endl;
+                    for (int j=0; j<range_flt.size(); ++j) {
+                        if (fxy(ii, j) == 1)
+                            sum += std::exp( I * k / r *(range_flt(ii)*x_p + range_flt(j)*y_p) );
+                    }
+                }
             }
+                
         }
+        
         return sum;
     }
     // xy -> fxy
