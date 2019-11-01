@@ -4,6 +4,8 @@
 # define _USE_MATH_DEFINES
 # include <cmath>
 # include <iostream>
+# include <string>
+# include <fstream>
 // # include <bits/stdc++.h> // for M_PI
 # include "Eigen/Dense"
 # include "simulation.hpp"
@@ -24,13 +26,10 @@ int main(int argc, char const *argv[])
     const eg::VectorXf range_flt = eg::VectorXf::LinSpaced(dense_flt, -r0, r0);
     const eg::VectorXf range_sc = eg::VectorXf::LinSpaced(dense_sc, -screen_range, screen_range);
 
-    std::cout << "wavelength: " << wavelength_nm << " R: " << r << " r0: " << r0 << " dense_flt: " << dense_flt 
-        << " dense_sc: " << dense_sc << std::endl;
+    std::string file_path;
+    std::ofstream writing_file(file_path, std::ios::out);
 
-    eg::MatrixXf grr;
-    simulate(grr, circle, range_flt, range_sc, r, k, r0);
-
-    std::cout << grr << std::endl;
+    writing_file << "" << std::endl;
 
     return 0;
 }
