@@ -35,6 +35,7 @@ int main(int argc, char const *argv[])
         << " dense_sc: " << dense_sc;
     file_path += ss.str();
     file_path += getTimeStamp(); // timestamp
+    file_path += ".txt";
     std::ofstream writing_file(file_path, std::ios::out);
 
     writing_file << ss.str() << std::endl;
