@@ -10,13 +10,29 @@ void fft2(const eg::MatrixXf& input, eg::MatrixXcf& output)
     eg::MatrixXcf tmp(input.rows(), input.cols());
   
     for (int i=0; i < input.cols(); ++i) {
-      tmp.col(i) = fft.fwd(input.col(i));
+      tmp.col(i).noalias() = fft.fwd(input.col(i));
     }
     for (int i=0; i< input.cols(); ++i) {
-      output.row(i) = fft.fwd(tmp.row(i)).transpose();
+      output.row(i).noalias() = fft.fwd(tmp.row(i)).transpose();
     }
 
 }
+
+void ifft2(const eg::MatrixXcf& input, eg::MatrixXcf& output) 
+{
+  
+    const eg::FFT<float> fft;
+    eg::MatrixXcf tmp(input.rows(), input.cols());
+  
+    for (int i=0; i < input.cols(); ++i) {
+      tmp.col(i).noalias() = fft.inv(input.col(i));
+    }
+    for (int i=0; i< input.cols(); ++i) {
+      output.row(i).noalias() = fft.inv(tmp.row(i)).transpose();
+    }
+
+}
+
 
 // 表示用に結果をずらす
 void shift(eg::MatrixXcf& freq)
