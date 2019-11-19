@@ -1,12 +1,12 @@
 # include "Eigen/Dense"
-# include "unsupported/Eigen/FFT"
+# include "eigen/unsupported/Eigen/FFT"
 
 namespace eg = Eigen;
 
 void fft2(const eg::MatrixXf& input, eg::MatrixXcf& output) 
 {
   
-    const eg::FFT<float> fft;
+    eg::FFT<float> fft;
     eg::MatrixXcf tmp(input.rows(), input.cols());
   
     for (int i=0; i < input.cols(); ++i) {
@@ -21,7 +21,7 @@ void fft2(const eg::MatrixXf& input, eg::MatrixXcf& output)
 void ifft2(const eg::MatrixXcf& input, eg::MatrixXcf& output) 
 {
   
-    const eg::FFT<float> fft;
+    eg::FFT<float> fft;
     eg::MatrixXcf tmp(input.rows(), input.cols());
   
     for (int i=0; i < input.cols(); ++i) {
