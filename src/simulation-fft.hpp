@@ -36,7 +36,7 @@ namespace simulation_fft
     void simulate(eg::MatrixXf& grr, const FuncType f, const eg::VectorXf& range_flt, const eg::VectorXf& range_sc, const float r, const float k, const eg::MatrixXcf& freq_G) {
         
         eg::MatrixXf H = eg::MatrixXf::Zero(range_flt.size(), range_flt.size());        
-        calc_xy_mesh(H, range_flt, [](float x, float y){ return f(x, y); }); // f(x, y)
+        calc_xy_mesh(H, range_flt, [&f](float x, float y){ return f(x, y); }); // f(x, y)
         eg::MatrixXcf freq_H = eg::MatrixXcf::Zero(range_flt.size(), range_flt.size());        
         fft2(H, freq_H);
 
