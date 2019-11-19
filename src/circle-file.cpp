@@ -34,9 +34,9 @@ int main(int argc, char const *argv[])
 
     std::string file_path("../results/circle/");
     std::stringstream ss;
-    ss << "wavelength: " << wavelength_nm << " r0: " << r0 << " n_flt: " << n_flt 
-        << " n_sc: " << n_sc << " n_R: " << n_R << " R_min: " << R_min 
-        << " R_max: " << R_max;
+    ss << "wavelength=" << wavelength_nm << "-r0=" << r0 << "_n_flt=" << n_flt 
+        << "-n_sc=" << n_sc << "-n_R=" << n_R << "-R_min=" << R_min 
+        << "-R_max=" << R_max;
     file_path += ss.str();
     file_path += "__";
     file_path += getTimeStamp(); // timestamp
