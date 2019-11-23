@@ -1,29 +1,22 @@
 #ifndef FFT_HPP
 #define FFT_HPP
-// # include <opencv4/opencv2/core/core.hpp>
-# include "Eigen/Dense"
-# include <opencv4/opencv2/opencv.hpp>
-// # include <opencv4/opencv2/core.hpp>
-// # include <opencv4/opencv2/core/eigen.hpp>
-// # include "eigen/unsupported/Eigen/FFT"
+#include "Eigen/Dense"
+#include <iostream>
+#include <vector>
+#include <complex>
 
 namespace eg = Eigen;
 
-void fft2(const eg::MatrixXf& input, eg::MatrixXcf& output) 
-{
-    cv::Mat input_m, output_m;
-    cv::eigen2cv(input, input_m);
-    cv::dft(input_m, output_m);
-    cv::cv2eigen(output_m, output);
-}
-
-void ifft2(const eg::MatrixXcf& input, eg::MatrixXcf& output) 
-{
-    cv::Mat input_m, output_m;
-    cv::eigen2cv(input, input_m);
-    cv::idft(input_m, output_m);
-    cv::cv2eigen(output_m, output);
-}
+// fft header
+int lc_fft_calc_ids( const int N, std::vector< int >* pids );
+void lc_fft(
+            const std::vector< std::complex<double> >& a,
+            const std::vector< int >& ids, const int n_level,
+            std::vector< std::complex< double > >* pout, bool is_inverse=0 );
+void lc_inverse_fft(
+                    const std::vector< std::complex<double> >& a,
+                    const std::vector< int >& ids,const int n_level,
+                    std::vector< std::complex< double > >* pout );
 
 
 // 表示用に結果をずらす
