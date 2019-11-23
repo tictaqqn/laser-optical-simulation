@@ -1,2 +1,4 @@
 *.out
+*.o
+circle-fft-file
 .ipynb_checkpoints

@@ -35,11 +35,12 @@ int lc_fft_calc_ids(
     }
     return n_level;
 }
+template<typename T>
 void lc_fft(
-            const std::vector< std::complex<double> >& a,
+            const std::vector< std::complex<T> >& a,
             const std::vector< int >& ids,
             const int n_level,
-            std::vector< std::complex< double > >* pout,
+            std::vector< std::complex< T > >* pout,
             bool is_inverse/*=0*/
             )
 {
@@ -65,10 +66,10 @@ void lc_fft(
         const int po2m = po2>>1;
         // 高価なexp()計算呼出は最小回数に抑える。
         auto w =
-        exp( std::complex<double>(.0,2*M_PI/(double)po2) );
+        exp( std::complex<T>(.0,2*M_PI/(T)po2) );
         // そして逆変換の場合は、wの素を複素共役に。
         w = is_inverse ? conj(w): w;
-        auto ws = std::complex<double>(1,0);
+        auto ws = std::complex<T>(1,0);
         // バタフライダイヤグラム：Wを共有する項をまとめて計算。
         for( int k=0; k<po2m; ++k )
         {
@@ -85,16 +86,17 @@ void lc_fft(
     }// i_level
     return;
 }
-void lc_inverse_fft( const std::vector< std::complex<double> >& a,
+template<typename T>
+void lc_inverse_fft( const std::vector< std::complex<T> >& a,
                     const std::vector< int >& ids, const int n_level,
-                    std::vector< std::complex< double > >* pout )
+                    std::vector< std::complex< T > >* pout )
 {
     // inverse_fft
     // 入力信号 a 数値列の、高速フーリエ逆変換を行います。
     // a.size()は２のべき乗数であることが大前提です。
-    lc_fft( a, ids, n_level, pout, !0 );
+    lc_fft( a, ids, n_level, pout, true );
     auto N = a.size();
     for_each( pout->begin(), pout->end(),
-             [N](std::complex<double>& val){val/=N;} );
+             [N](std::complex<T>& val){val/=N;} );
     return;
 }

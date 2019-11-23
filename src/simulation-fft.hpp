@@ -9,7 +9,7 @@
 # include <functional>
 # include <opencv4/opencv2/core/eigen.hpp>
 # include "Eigen/Dense"
-# include "fft.hpp"
+# include "fft-eigen.h"
 // # define DEBUG
 
 namespace eg = Eigen;
