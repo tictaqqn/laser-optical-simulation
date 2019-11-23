@@ -1,3 +1,5 @@
+#ifndef FFT_HPP
+#define FFT_HPP
 // # include <opencv4/opencv2/core/core.hpp>
 # include "Eigen/Dense"
 # include <opencv4/opencv2/opencv.hpp>
@@ -38,3 +40,4 @@ void shift(eg::MatrixXcf& freq)
    
     freq = tmp;
 }
+#endif

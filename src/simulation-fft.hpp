@@ -1,3 +1,6 @@
+#ifndef SIMULATION_HPP
+#define SIMULATION_HPP
+
 # define EIGEN_NO_DEBUG // コード内のassertを無効化．
 // # define EIGEN_MPL2_ONLY // LGPLライセンスのコードを使わない．
 
@@ -56,5 +59,5 @@ namespace simulation_fft
 
     
 } // namespace simulation_fft
-
+#endif
 

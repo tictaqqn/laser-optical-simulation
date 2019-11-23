@@ -1,3 +1,5 @@
+#ifndef GET_TIME_STAMP_HPP
+#define GET_TIME_STAMP_HPP
 #include <string>
 #include <chrono>
 #include <sstream>
@@ -16,3 +18,4 @@ std::string getTimeStamp()
 //20171231_145030
 
 //2017年12月31日 14時50分30秒のこと
+#endif
